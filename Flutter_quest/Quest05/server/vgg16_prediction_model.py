@@ -32,5 +32,5 @@ async def prediction_model(model, islabel):
     if islabel:
         result = {"predicted_label": str(result[0][0][1])}
     else: 
-        result = {"prediction_score": str(result[0][0][2])}
+        result = {"predicted_score": str(result[0][0][2])}
     return result
