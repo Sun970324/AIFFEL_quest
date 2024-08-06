@@ -2,7 +2,7 @@
 # To get started, simply uncomment the below code or create your own.
 # Deploy with `firebase deploy`
 
-from firebase_functions import https_fn, firestore_fn
+from firebase_functions import https_fn, firestore_fn, db_fn
 from firebase_admin import initialize_app, firestore
 import google.cloud.firestore
 app = initialize_app()
@@ -27,24 +27,20 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
     # Send back a message that we've successfully written the message
     return https_fn.Response(f"Message with ID {doc_ref.id} added.")
 
-@firestore_fn.on_document_created(document="messages/{pushId}")
-def makeuppercase(
+@firestore_fn.on_document_created(document="diary/{pushId}")
+def create_diary_entry(
     event: firestore_fn.Event[firestore_fn.DocumentSnapshot | None],
 ) -> None:
-    """Listens for new documents to be added to /messages. If the document has
-    an "original" field, creates an "uppercase" field containg the contents of
-    "original" in upper case."""
+    # 데이터베이스에 저장된 데이터 가져오기
+    doc_ref = db_fn.collection('diary').document()
+    doc = doc_ref.get()
 
-    # Get the value of "original" if it exists.
-    if event.data is None:
-        return
-    try:
-        original = event.data.get("original")
-    except KeyError:
-        # No "original" field, so do nothing.
-        return
+    # HTTP 요청 보내기
+    response = requests.post('http://127.0.0.1:8000/', data=doc.to_dict())
 
-    # Set the "uppercase" field.
-    print(f"Uppercasing {event.params['pushId']}: {original}")
-    upper = original.upper()
-    event.data.reference.update({"uppercase": upper})
+    # 응답 결과를 데이터베이스에 업데이트
+    doc_ref.update({
+        'result': response.text
+    })
+
+    return 'Diary entry created and updated.'

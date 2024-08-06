@@ -29,7 +29,7 @@ class _WriteScreenState extends ConsumerState<WriteScreen> {
     super.dispose();
   }
 
-  void submit(String content) {
+  void submit(String content) async {
     if (content != '') {
       ref.read(diaryProvider.notifier).createDiary(content);
       Navigator.pop(context);

@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ViewScreen extends ConsumerWidget {
   final String content;
   final String date;
-
+  final String emotion;
   const ViewScreen({
     super.key,
     required this.content,
     required this.date,
+    required this.emotion,
   });
 
   @override
@@ -19,16 +20,25 @@ class ViewScreen extends ConsumerWidget {
         title: Text(date),
       ),
       body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          height: size.height * 0.5,
-          width: size.width * 0.8,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(emotion),
+            const SizedBox(
+              height: 20,
             ),
-          ),
-          child: Text(content),
+            Container(
+              padding: const EdgeInsets.all(10),
+              height: size.height * 0.5,
+              width: size.width * 0.8,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                ),
+              ),
+              child: Text(content),
+            ),
+          ],
         ),
       ),
     );

@@ -32,12 +32,14 @@ class ListScreen extends ConsumerWidget {
                           builder: (context) => ViewScreen(
                             content: data[index].content,
                             date: parseDate(data[index].createdAt),
+                            emotion: data[index].emotion,
                           ),
                         ),
                       ),
                     },
                     child: ListTile(
                       title: Text(parseDate(data[index].createdAt)),
+                      trailing: Text(data[index].emotion),
                     ),
                   ),
                 ),

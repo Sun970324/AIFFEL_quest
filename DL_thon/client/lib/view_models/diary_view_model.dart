@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:client/models/diary_model.dart';
 import 'package:client/repos/diary_repo.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:http/http.dart' as http;
 
 class DiaryViewModel extends AsyncNotifier<List<DiaryModel>> {
   late final DiaryRepository _repository;
@@ -26,9 +28,21 @@ class DiaryViewModel extends AsyncNotifier<List<DiaryModel>> {
 
   Future<void> createDiary(String content) async {
     state = const AsyncValue.loading();
+    Uri uri = Uri.https('abd0-124-56-101-127.ngrok-free.app', '/predict');
+    final body = jsonEncode({"text": content});
+    final response = await http
+        .post(
+          uri,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: body,
+        )
+        .then((value) => jsonDecode(utf8.decode(value.bodyBytes)));
     state = await AsyncValue.guard(() async {
       final diary = DiaryModel(
         content: content,
+        emotion: response['emotion'],
         createdAt: DateTime.now().toString(),
       );
       await _repository.createDiary(diary);
