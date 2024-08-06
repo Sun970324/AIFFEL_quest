@@ -1,14 +1,19 @@
 # server_fastapi_1.py
 import uvicorn   # pip install uvicorn 
-from fastapi import FastAPI, HTTPException   # pip install fastapi 
+from fastapi import FastAPI, HTTPException, Query   # pip install fastapi 
 from fastapi.middleware.cors import CORSMiddleware # cors issue
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
 from pydub.generators import Sine
 from transformers import pipeline
 import scipy.io.wavfile as wavfile
-
+from audiocraft.models import musicgen
+from audiocraft.utils.notebook import display_audio
+import torch
 # Create the FastAPI application
+model = musicgen.MusicGen.get_pretrained('medium', device='cuda')
+model.set_generation_params(duration=30)
+
 app = FastAPI()
 
 # cors 이슈
@@ -25,30 +30,25 @@ app.add_middleware(
 # A simple example of a GET request
 @app.get("/") # 
 def read_root():
-    return "Hello 아이펠!"
+    return "Hello!"
 
-@app.get('/example')
-async def root():
-    return {"example":"This is example", "data": 0}
-
-synthesiser = pipeline("text-to-audio", "facebook/musicgen-small")
-
-
-# 요청 데이터 형식 정의
 class MusicRequest(BaseModel):
     prompt: str
 
-@app.post("/generate_music")
-async def generate_music(request: MusicRequest):
+@app.get("/generate_music")
+async def generate_music(genre: str = Query(default=None), tempo: str = Query(default=None), mood: str = Query(default=None)):
     try:
         # 텍스트로부터 오디오 생성
-        music = synthesiser(request.prompt, forward_params={"do_sample": True})
-
+        res = model.generate([f'{genre}, {tempo}, {mood}'], 
+        progress=True)
+        print(res);
+        # display_audio(res, 32000)
+        return {"music": res}
         # 오디오 파일 저장
-        output_path = "musicgen_out.wav"
-        wavfile.write(output_path, rate=music["sampling_rate"], data=music["audio"])
+        # output_path = "musicgen_out.wav"
+        # wavfile.write(output_path, rate=music["sampling_rate"], data=music["audio"])
 
-        return FileResponse(output_path, media_type="audio/wav", filename="musicgen_out.wav")
+        # return FileResponse(output_path, media_type="audio/wav", filename="musicgen_out.wav")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 # Run the server

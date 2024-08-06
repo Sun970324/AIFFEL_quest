@@ -1,10 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:client/constants/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 class SecondScreen extends StatefulWidget {
@@ -24,33 +20,32 @@ class _SecondScreenState extends State<SecondScreen> {
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
-    void onTapGenerate() async {
+    void generateMusic() async {
       setState(() {
         isLoading = true;
       });
-      Uri uri = Uri.parse(
-          'https://467d-124-56-101-127.ngrok-free.app/generate_music');
-      final response = await http.post(
+      Uri uri =
+          Uri.https('467d-124-56-101-127.ngrok-free.app', '/generate_music', {
+        'genre': widget.prompt[0]['value'],
+        'tempo': widget.prompt[1]['value'],
+        'mood': widget.prompt[2]['value'],
+      });
+      final response = await http.get(
         uri,
         headers: {
           "Content-Type": "application/json",
         },
-        body: jsonEncode({
-          'prompt':
-              '${widget.prompt[0]['value']}, ${widget.prompt[1]['value']}, ${widget.prompt[2]['value']}'
-        }),
       );
       if (response.statusCode == 200) {
-        print(response);
-        final dir = await getTemporaryDirectory();
-        final file = File('${dir.path}/generated_music.wav');
-        await file.writeAsBytes(response.bodyBytes);
-        setState(() {
-          audioFilePath = file.path;
-          isLoading = false;
-        });
-        print(file.path);
-        await audioPlayer.play(BytesSource(response.bodyBytes));
+        // final dir = await getTemporaryDirectory();
+        // final file = File('${dir.path}/generated_music.wav');
+        // await file.writeAsBytes(response.bodyBytes);
+        // setState(() {
+        //   audioFilePath = file.path;
+        //   isLoading = false;
+        // });
+        // await audioPlayer.play(AssetSource(file.path));
+        print(response.body);
       } else {
         setState(() {
           isLoading = false;
@@ -126,7 +121,7 @@ class _SecondScreenState extends State<SecondScreen> {
           right: Sizes.size24,
         ),
         child: GestureDetector(
-          onTap: () => onTapGenerate(),
+          onTap: () => generateMusic(),
           child: Container(
             padding: const EdgeInsets.symmetric(
               vertical: Sizes.size16 + Sizes.size2,
