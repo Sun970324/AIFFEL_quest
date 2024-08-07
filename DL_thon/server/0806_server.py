@@ -10,6 +10,7 @@ from transformers import BertTokenizer, BertModel
 from torch import nn
 import numpy as np
 
+import time
 # BERT 모델 클래스 정의
 class BERTClassifier(nn.Module):
     def __init__(self, bert_model, num_classes, dropout_rate=0.3):
@@ -59,24 +60,7 @@ def classify_emotion(text):
     
     predicted_emotion = emotion_labels[predicted_class]
     confidence = probabilities[0][predicted_class].item()
-    
     return predicted_emotion, confidence
-
-
-# # 테스트
-# test_texts = [
-#     "오늘은 정말 행복한 날이에요!",
-#     "이 상황이 너무 화가 나고 짜증나요."
-# ]
-
-# for text in test_texts:
-#     emotion, confidence = classify_emotion(text)
-#     print(f"텍스트: {text}")
-#     print(f"예측된 감정: {emotion}")
-#     print(f"신뢰도: {confidence:.4f}")
-#     print()
-
-
 
 #### 함수 ####
 # FastAPI 애플리케이션 인스턴스 생성
