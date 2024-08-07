@@ -1,4 +1,5 @@
-import 'package:client/screens/view_screen.dart';
+import 'package:client/repos/mood_repo.dart';
+import 'package:client/views/view_screen.dart';
 import 'package:client/view_models/diary_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +39,7 @@ class ListScreen extends ConsumerWidget {
                       ),
                     },
                     child: ListTile(
+                      tileColor: moodColors[data[index].emotion],
                       title: Text(parseDate(data[index].createdAt)),
                       trailing: Text(data[index].emotion),
                     ),

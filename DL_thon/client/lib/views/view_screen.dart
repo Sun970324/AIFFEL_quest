@@ -1,3 +1,4 @@
+import 'package:client/repos/mood_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,12 +19,13 @@ class ViewScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(date),
+        backgroundColor: moodColors[emotion],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(emotion),
+            Text('나의 감정은 "$emotion" 입니다.'),
             const SizedBox(
               height: 20,
             ),

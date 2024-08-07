@@ -1,4 +1,5 @@
 import 'package:client/view_models/diary_view_model.dart';
+import 'package:client/view_models/mood_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,7 +32,8 @@ class _WriteScreenState extends ConsumerState<WriteScreen> {
 
   void submit(String content) async {
     if (content != '') {
-      ref.read(diaryProvider.notifier).createDiary(content);
+      final moodVM = ref.read(moodProvider.notifier);
+      ref.read(diaryProvider.notifier).createDiary(content, moodVM);
       Navigator.pop(context);
     }
   }
@@ -39,6 +41,9 @@ class _WriteScreenState extends ConsumerState<WriteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('오늘의 일기'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
