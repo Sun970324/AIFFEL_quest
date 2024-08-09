@@ -29,7 +29,7 @@ class DiaryViewModel extends AsyncNotifier<List<DiaryModel>> {
 
   Future<void> createDiary(String content, MoodViewModel moodProvider) async {
     state = const AsyncValue.loading();
-    Uri uri = Uri.https('bda9-124-56-101-127.ngrok-free.app', '/predict');
+    Uri uri = Uri.https('ca74-124-56-101-127.ngrok-free.app', '/predict');
     final body = jsonEncode({"text": content});
     final response = await http
         .post(

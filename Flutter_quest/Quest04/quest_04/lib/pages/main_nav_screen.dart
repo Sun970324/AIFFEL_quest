@@ -16,11 +16,7 @@ class MainNavScreen extends StatefulWidget {
 }
 
 class _MainNavScreenState extends State<MainNavScreen> {
-  final List<String> _tabs = [
-    "home",
-    "around",
-    "chat",
-  ];
+
   int _selectedIndex = 0;
 
   void _onTap(int index) {
